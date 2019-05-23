@@ -1,7 +1,12 @@
-FROM node:10.8.0-slim
-RUN sudo apt-get update && sudo apt-get install -y nginx
-WORKDIR /app
-COPY . /app/
-EXPOSE 80
-RUN  npm install && npm run build  && cp -r dist/* /var/www/html && rm -rf /app
-CMD ["nginx","-g","daemon off;"]
+FROM node:9.0
+
+RUN mkdir -p /var/www/html
+WORKDIR /var/www/html
+
+COPY package.json /var/www/html/
+# set taobao source package
+RUN npm config set registry https://registry.npm.taobao.org
+RUN npm install
+COPY . /var/www/html
+
+RUN npm run build
